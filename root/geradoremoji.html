@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gerador de Emojis</title>
+  <meta name="description" content="Gere mensagens compostas por uma quantidade específica de emojis e copie com um clique." />
+  <meta name="theme-color" content="#0ea5e9" />
+  <!-- Tailwind CSS (Play CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ["Inter", "ui-sans-serif", "system-ui"] },
+          boxShadow: {
+            soft: "0 10px 30px -10px rgba(15, 23, 42, .35)",
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* rabicho da bolha */
+    .bubble:after{content:"";position:absolute;right:18px;bottom:-10px;width:18px;height:18px;background:inherit;border-right:1px solid rgba(255,255,255,.25);border-bottom:1px solid rgba(255,255,255,.25);transform:rotate(45deg)}
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-white">
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-10 md:py-16">
+    <!-- Header -->
+    <header class="flex items-center justify-between gap-4 mb-8">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl grid place-items-center text-2xl bg-cyan-500/15 text-cyan-300 ring-1 ring-cyan-400/20 shadow-soft">😀</div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-semibold tracking-tight">Gerador de Emojis</h1>
+          <p class="text-sm text-slate-300/80">Gere exatamente <em>n</em> emojis e copie com 1 clique.</p>
+        </div>
+      </div>
+      <a href="#github-instrucoes" class="text-sm text-cyan-300 hover:text-cyan-200 transition">Como publicar</a>
+    </header>
+
+    <!-- Card -->
+    <article class="relative rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-5 sm:p-7 shadow-soft">
+      <div class="mb-5">
+        <h2 class="m-0 text-lg sm:text-xl font-semibold">Crie sua mensagem só com emojis</h2>
+        <p class="text-slate-300/80 mt-1">Informe a <strong>quantidade de emojis</strong> e clique em <span class="italic">Gerar</span>.</p>
+      </div>
+
+      <!-- Controls -->
+      <form class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 items-end" onsubmit="event.preventDefault(); gerar();">
+        <label for="qtd" class="text-sm">
+          Quantidade de emojis
+          <input type="number" id="qtd" name="qtd" min="1" max="2000" value="20" placeholder="ex.: 50"
+                 class="mt-1 w-full rounded-xl border border-white/15 bg-white/10 text-slate-100 placeholder:text-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 px-4 py-3" required />
+        </label>
+        <button id="btnGerar" type="submit" class="inline-flex items-center justify-center rounded-xl px-5 py-3 font-medium bg-cyan-500 text-slate-900 hover:bg-cyan-400 active:bg-cyan-300 transition disabled:opacity-60 disabled:cursor-not-allowed">
+          Gerar
+        </button>
+        <p class="sm:col-span-2 text-xs text-slate-300/80 -mt-1">Dica: pressione <kbd class="px-1.5 py-0.5 rounded bg-white/10 border border-white/10">Enter</kbd> para gerar rapidamente. Repetição de emojis é permitida.</p>
+      </form>
+
+      <!-- Output -->
+      <section class="mt-5 grid gap-2">
+        <div class="flex justify-end items-center gap-2">
+          <small id="status" aria-live="polite" class="text-slate-300/80"></small>
+          <button id="btnCopiar" type="button" title="Copiar mensagem" aria-label="Copiar mensagem"
+                  class="inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-sm border border-white/10 bg-white/5 hover:bg-white/10 transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M16 1H4a2 2 0 0 0-2 2v12h2V3h12V1Zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Zm0 16H8V7h11v14Z"/></svg>
+            Copiar
+          </button>
+        </div>
+        <div id="output" class="bubble relative min-h-[3.25rem] rounded-2xl border border-white/15 bg-white/10 p-4 text-3xl leading-tight shadow-soft"></div>
+        <div id="info" class="text-sm text-slate-300/80"></div>
+      </section>
+    </article>
+
+    <p class="text-center text-slate-300/70 mt-6">Feito com ❤️ em HTML + Tailwind. Funciona offline.</p>
+
+    <!-- GitHub Pages instructions -->
+    <section id="github-instrucoes" class="mt-8">
+      <details class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+        <summary class="cursor-pointer font-medium">Como publicar no GitHub Pages</summary>
+        <ol class="list-decimal ml-6 mt-3 space-y-1 text-slate-200/90">
+          <li>Crie um repositório no GitHub (ex.: <code>gerador-emojis</code>).</li>
+          <li>Adicione este arquivo como <code>index.html</code>, faça commit e push.</li>
+          <li>No GitHub: <em>Settings → Pages</em> → <em>Deploy from a branch</em> → selecione a branch (ex.: <code>main</code>) e a pasta <code>/root</code>.</li>
+          <li>Aguarde a URL do Pages (ex.: <code>https://seuusuario.github.io/gerador-emojis/</code>).</li>
+        </ol>
+      </details>
+    </section>
+  </main>
+
+  <script>
+    // Grande conjunto de emojis (diversas categorias)
+    const EMOJIS = `😀 😁 😂 🤣 😃 😄 😅 😆 😉 😊 😋 😎 😍 😘 🥰 😗 😙 😚 🙂 🤗 🤩 🤔 🤨 😐 😑 😶 🙄 😏 😣 😥 😮 🤐 😯 😪 😫 🥱 😴 😌 😛 😝 😜 🤤 😒 😓 😔 😕 🙃 🤑 😲 ☹️ 🙁 😖 😞 😟 😤 😢 😭 😦 😧 😨 😩 🤯 😬 😰 😱 🥵 🥶 😳 🤪 😵 😵‍💫 🤠 🥳 🥺 🤥 🤫 🤭 🧐 🤓 😈 👿 💀 ☠️ 👻 👽 🤖 💩 😺 😸 😹 😻 😼 😽 🙀 😿 😾 👋 🤚 🖐️ ✋ 🖖 👌 🤌 🤏 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 🖕 👇 ☝️ 👍 👎 ✊ 👊 🤛 🤜 👏 🙌 👐 🤲 🤝 🙏 💅 🤳 💪 🦾 🦿 🦵 🦶 👂 🦻 👃 👣 👀 👁️ 🧠 🦷 🦴 👅 👄 💋 🫦 🫶 💘 💝 💖 💗 💓 💞 💕 💌 💟 ❣️ 💔 ❤️ 🧡 💛 💚 💙 💜 🤎 🖤 🤍 💯 💢 💬 👁️‍🗨️ 🗯️ 💭 💤 👋🏻 👍🏻 👎🏻 👌🏻 ✌🏻 🤞🏻 👊🏻 🤟🏻 👏🏻 🙏🏻 🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐸 🐵 🐔 🐧 🐦 🐤 🦆 🦅 🦉 🦇 🐺 🦄 🐝 🐛 🦋 🐌 🐞 🐢 🐍 🦎 🦂 🦀 🦑 🐙 🦐 🐠 🐟 🐡 🐬 🐳 🐋 🐊 🐅 🐆 🦓 🦍 🦧 🐘 🦛 🦏 🐪 🐫 🦒 🐃 🐂 🐄 🐎 🦌 🐐 🐏 🐑 🐖 🐗 🐕 🦮 🐩 🐈 🐓 🦃 🦚 🦜 🦢 🦩 🕊️ 🐇 🐁 🐀 🐿️ 🦔 🐾 🌸 💮 🪷 🏵️ 🌹 🥀 🌺 🌻 🌼 🌷 🌱 🌲 🌳 🌴 🌵 🌾 🌿 ☘️ 🍀 🍁 🍂 🍃 🍇 🍈 🍉 🍊 🍋 🍌 🍍 🥭 🍎 🍏 🍐 🍑 🍒 🍓 🫐 🥝 🍅 🥥 🥑 🍆 🥔 🥕 🌽 🌶️ 🧄 🧅 🥒 🥬 🥦 🍞 🥐 🥖 🥨 🧀 🥚 🥓 🥩 🍗 🍖 🌭 🍔 🍟 🍕 🫓 🥪 🌮 🌯 🥙 🧆 🍳 🥘 🍲 🫕 🥫 🍝 🍜 🍛 🍣 🍱 🥟 🥠 🥡 🍤 🍙 🍚 🍘 🍥 🥮 🍢 🍡 🍧 🍨 🍦 🥧 🧁 🍰 🎂 🍮 🍭 🍬 🍫 🍿 🧋 ☕ 🍵 🥤 🥛 🍺 🍻 🍷 🥂 🥃 🍸 🍹 🍾 🥄 🍴 🍽️ 🥢 🧂 ⚽ 🏀 🏈 ⚾ 🎾 🏐 🏉 🥏 🎱 🏓 🏸 🥅 🏒 🏑 🥍 🏏 ⛳ 🏹 🎣 🤿 🥊 🥋 🎽 🛹 🛼 🛷 ⛸️ 🥌 🎿 ⛷️ 🏂 🪂 🚴 🚵 🏋️ 🤸 🤾 🧗 🧘 🛀 🚿 🛌 🧖 🎯 🎮 🧩 ♟️ 🎲 🧸 🪀 🪁 🔮 🕹️ 📱 💻 ⌨️ 🖥️ 🖨️ 💽 💾 💿 📀 📸 📷 🎥 🎞️ 📺 📻 🔈 🔊 🔇 🔔 🔕 📣 📢 💡 🔌 🔋 🧯 🛢️ 🔧 🔨 ⚒️ 🛠️ ⛏️ 🪓 🔩 ⚙️ 🧱 ⛓️ 🧲 🪜 ⚖️ 🧪 🧫 🧬 🧰 🧷 🧵 🪡 🧶 🪢 👚 👕 👖 🧣 🧤 🧦 👗 👘 👙 👛 👜 👝 🎒 👞 👟 🥾 🥿 👠 👡 🩴 👑 🎩 🎓 🧢 ⛑️ 💄 💍 💼`.split(/\s+/);
+
+    const qtdInput = document.getElementById('qtd');
+    const outputEl = document.getElementById('output');
+    const infoEl = document.getElementById('info');
+    const statusEl = document.getElementById('status');
+    const btnGerar = document.getElementById('btnGerar');
+    const btnCopiar = document.getElementById('btnCopiar');
+
+    function gerar() {
+      const n = Number.parseInt(qtdInput.value, 10);
+      if (!Number.isFinite(n) || n < 1 || n > 2000) {
+        statusEl.textContent = 'Informe um número entre 1 e 2000.';
+        return;
+      }
+      btnGerar.setAttribute('disabled', 'true');
+      // Gera exatamente n emojis (com repetição permitida)
+      let arr = new Array(n);
+      for (let i = 0; i < n; i++) {
+        arr[i] = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+      }
+      const msg = arr.join('');
+      outputEl.textContent = msg;
+      infoEl.textContent = `${n.toLocaleString('pt-BR')} emojis • ${msg.length.toLocaleString('pt-BR')} caracteres`;
+      statusEl.textContent = '';
+      btnCopiar.disabled = msg.length === 0;
+      btnGerar.removeAttribute('disabled');
+    }
+
+    async function copiar() {
+      const text = outputEl.textContent || '';
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        const old = btnCopiar.textContent;
+        btnCopiar.textContent = 'Copiado!';
+        setTimeout(() => (btnCopiar.textContent = old), 1200);
+      } catch (err) {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        const old = btnCopiar.textContent;
+        btnCopiar.textContent = 'Copiado!';
+        setTimeout(() => (btnCopiar.textContent = old), 1200);
+      }
+    }
+
+    btnGerar.addEventListener('click', gerar);
+    btnCopiar.addEventListener('click', copiar);
+    document.getElementById('qtd').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); gerar(); } });
+
+    // Geração inicial
+    gerar();
+  </script>
+</body>
+</html>
